@@ -57,25 +57,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _incrementCounter() async {
-    int localCounter = _counter;
+    DocumentReference docRef = Firestore.instance.collection("counters").document("mycounter");
 
     setState(() {
       isUpdateInProgress = true;
     });
 
-    localCounter++;
-
-    await Firestore.instance.collection("counters").document("mycounter").setData(
-      {
-        "counter": localCounter
-      }
-    );
-    print("done");
-
-
-    setState(() {
-      isUpdateInProgress = false;
-      _counter = localCounter;
+    Firestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot documentSnapshot = await transaction.get(docRef);
+      int currentCounterValue = documentSnapshot.data["counter"];
+      await transaction.update(docRef, {'counter': currentCounterValue + 1});
     });
   }
 
