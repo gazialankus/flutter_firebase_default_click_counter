@@ -27,41 +27,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  bool isUpdateInProgress;
+  Stream<DocumentSnapshot> _counterStream;
 
   @override
   void initState() {
     super.initState();
-    initAsync();
-  }
-
-  Future initAsync() async {
-    isUpdateInProgress = true;
-
-    DocumentReference docRef = Firestore.instance
-      .collection("counters").document("mycounter");
-
-    Stream<DocumentSnapshot> snapshots = docRef.snapshots();
-
-    await for (final snap in snapshots) {
-      print("received a value!");
-      int counterFromServer = snap.data['counter'];
-      print(counterFromServer);
-
-      setState(() {
-        _counter = counterFromServer;
-        isUpdateInProgress = false;
-      });
-    }
+    _counterStream = Firestore.instance.collection("counters").document("mycounter").snapshots();
   }
 
   Future<void> _incrementCounter() async {
     DocumentReference docRef = Firestore.instance.collection("counters").document("mycounter");
-
-    setState(() {
-      isUpdateInProgress = true;
-    });
 
     Firestore.instance.runTransaction((transaction) async {
       DocumentSnapshot documentSnapshot = await transaction.get(docRef);
@@ -83,9 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'You have pushed the button this many times:',
             ),
-            isUpdateInProgress == true
-              ? CircularProgressIndicator()
-              : Text('$_counter', style: Theme.of(context).textTheme.display1,),
+            buildCounterDisplay(context),
           ],
         ),
       ),
@@ -94,6 +67,25 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Widget buildCounterDisplay(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _counterStream,
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if(snapshot.hasData) {
+          // data
+          int currentCounter = snapshot.data.data['counter'];
+          return Text('$currentCounter', style: Theme.of(context).textTheme.display1,);
+        } else if (snapshot.hasError){
+          // error
+          return Text("There was an error: ${snapshot.error}");
+        } else {
+          // progress
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
 }
