@@ -33,42 +33,49 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    isUpdateInProgress = true;
-
-    Future<DocumentSnapshot> getFuture = Firestore.instance
-      .collection("counters").document("mycounter")
-      .get();
-
-    getFuture.then((DocumentSnapshot snap) {
-      setState(() {
-        Map<String, dynamic> data = snap.data;
-        int i = data['counter'];
-        _counter = i;
-        isUpdateInProgress = false;
-      });
-    });
+    initAsync();
   }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  Future initAsync() async {
+    isUpdateInProgress = true;
 
-      DocumentReference docRef = Firestore.instance.collection("counters").document("mycounter");
+    DocumentReference docRef = Firestore.instance
+      .collection("counters").document("mycounter");
 
-      Future<void> setDataFuture = docRef.setData(
-        {
-          "counter": _counter
-        }
-      );
+    Stream<DocumentSnapshot> snapshots = docRef.snapshots();
 
-      setDataFuture.then((_) {
-        setState(() {
-          isUpdateInProgress = false;
-        });
-        print("done");
+    await for (final snap in snapshots) {
+      print("received a value!");
+      int counterFromServer = snap.data['counter'];
+      print(counterFromServer);
+
+      setState(() {
+        _counter = counterFromServer;
+        isUpdateInProgress = false;
       });
-      isUpdateInProgress = true;
+    }
+  }
 
+  Future<void> _incrementCounter() async {
+    int localCounter = _counter;
+
+    setState(() {
+      isUpdateInProgress = true;
+    });
+
+    localCounter++;
+
+    await Firestore.instance.collection("counters").document("mycounter").setData(
+      {
+        "counter": localCounter
+      }
+    );
+    print("done");
+
+
+    setState(() {
+      isUpdateInProgress = false;
+      _counter = localCounter;
     });
   }
 
