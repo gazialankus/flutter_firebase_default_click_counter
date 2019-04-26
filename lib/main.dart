@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,10 +28,47 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  bool isUpdateInProgress;
+
+  @override
+  void initState() {
+    super.initState();
+    isUpdateInProgress = true;
+
+    Future<DocumentSnapshot> getFuture = Firestore.instance
+      .collection("counters").document("mycounter")
+      .get();
+
+    getFuture.then((DocumentSnapshot snap) {
+      setState(() {
+        Map<String, dynamic> data = snap.data;
+        int i = data['counter'];
+        _counter = i;
+        isUpdateInProgress = false;
+      });
+    });
+  }
 
   void _incrementCounter() {
     setState(() {
       _counter++;
+
+      DocumentReference docRef = Firestore.instance.collection("counters").document("mycounter");
+
+      Future<void> setDataFuture = docRef.setData(
+        {
+          "counter": _counter
+        }
+      );
+
+      setDataFuture.then((_) {
+        setState(() {
+          isUpdateInProgress = false;
+        });
+        print("done");
+      });
+      isUpdateInProgress = true;
+
     });
   }
 
@@ -47,10 +85,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
+            isUpdateInProgress == true
+              ? CircularProgressIndicator()
+              : Text('$_counter', style: Theme.of(context).textTheme.display1,),
           ],
         ),
       ),
