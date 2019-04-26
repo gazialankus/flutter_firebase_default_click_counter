@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "51375386409",
+    "firebase_url": "https://se380-during-class.firebaseio.com",
+    "project_id": "se380-during-class",
+    "storage_bucket": "se380-during-class.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:51375386409:android:53d0e9e6342d6311",
+        "android_client_info": {
+          "package_name": "com.gazihan.flutter_firebase_b4class"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "51375386409-rne6eqm2m2rgnl0bvn0pbpsp11vivq2f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6TpaUc5DMc7VIANnMnIeOv6kQw831j0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "51375386409-rne6eqm2m2rgnl0bvn0pbpsp11vivq2f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
