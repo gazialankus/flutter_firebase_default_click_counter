@@ -1,16 +1,7 @@
-# flutter_firebase_b4class
+# Flutter Click Counter Backed By Firebase
 
-A new Flutter project.
+We created this Flutter project during our SE 380 Mobile Application Development course. 
 
-## Getting Started
+This is the default click counter Flutter app, modified to keep the number of clicks on Firebase. 
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+We used a couple of different techniques related to asynchronous programming. Please check the commits to see different versions of the app as it evolved. 
